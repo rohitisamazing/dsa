@@ -1,0 +1,116 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class PizzaParlor {
+private:
+string* queue;
+int front, rear;
+int maxSize;
+int currentSize;
+
+public:
+PizzaParlor(int M) {
+maxSize = M;
+queue = new string[maxSize];
+front = rear = -1;
+currentSize = 0;
+}
+
+~PizzaParlor() {
+delete[] queue;
+}
+
+bool isFull() {
+return currentSize == maxSize;
+}
+
+bool isEmpty() {
+return currentSize == 0;
+}
+
+void placeOrder(const string& order) {
+if (isFull()) {
+cout << "Sorry, the pizza parlor is full. Cannot accept more orders." << endl;
+} else {
+if (front == -1) {
+front = rear = 0;
+} else {
+rear = (rear + 1) % maxSize;
+}
+queue[rear] = order;
+currentSize++;
+cout << "Order placed: " << order << endl;
+
+}
+}
+
+void serveOrder() {
+if (isEmpty()) {
+cout << "No orders to serve." << endl;
+} else {
+cout << "Serving order: " << queue[front] << endl;
+if (front == rear) {
+front = rear = -1;
+} else {
+front = (front + 1) % maxSize;
+}
+currentSize--;
+}
+}
+
+void displayOrders() {
+if (isEmpty()) {
+cout << "No orders in the queue." << endl;
+} else {
+cout << "Current orders in the queue: " << endl;
+int i = front;
+while (i != rear) {
+cout << queue[i] << endl;
+
+i = (i + 1) % maxSize;
+}
+cout << queue[rear] << endl;
+}
+}
+};
+
+int main() {
+int M;
+cout << "Enter the maximum number of orders the pizza parlor can accept: ";
+cin >> M;
+
+PizzaParlor parlor(M);
+
+int choice;
+string order;
+
+while (true) {
+cout << "\n1. Place Order\n2. Serve Order\n3. Display Orders\n4. Exit\n";
+cout << "Enter your choice: ";
+cin >> choice;
+
+switch (choice) {
+case 1:
+cout << "Enter the order: ";
+
+cin.ignore();
+getline(cin, order);
+parlor.placeOrder(order);
+break;
+case 2:
+parlor.serveOrder();
+break;
+case 3:
+parlor.displayOrders();
+break;
+case 4:
+cout << "Exiting program." << endl;
+return 0;
+default:
+cout << "Invalid choice, please try again." << endl;
+}
+}
+
+return 0;
+}

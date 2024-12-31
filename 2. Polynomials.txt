@@ -1,0 +1,94 @@
+#include <iostream>
+using namespace std;
+const int MAX_DEGREE = 10;
+void displayPolynomial(int poly[], int degree) {
+for (int i = degree; i >= 0; --i) {
+if (poly[i] != 0) {
+if (i < degree && poly[i] > 0) {
+cout << "+";
+}
+cout << poly[i] << "x^" << i << " ";
+}
+}
+cout << endl;
+}
+void addPolynomials(int poly1[], int poly2[], int result[], int degree) {
+for (int i = 0; i <= degree; ++i) {
+result[i] = poly1[i] + poly2[i];
+}
+}
+void subtractPolynomials(int poly1[], int poly2[], int result[], int degree) {
+for (int i = 0; i <= degree; ++i) {
+result[i] = poly1[i] - poly2[i];
+}
+}
+
+void multiplyPolynomials(int poly1[], int poly2[], int result[], int degree) {
+for (int i = 0; i <= 2 * degree; ++i) {
+result[i] = 0;
+}
+for (int i = 0; i <= degree; ++i) {
+for (int j = 0; j <= degree; ++j) {
+result[i + j] += poly1[i] * poly2[j];
+}
+}
+}
+int main() {
+int poly1[MAX_DEGREE] = {0};
+int poly2[MAX_DEGREE] = {0};
+int result[2 * MAX_DEGREE] = {0};
+int degree;
+cout << "Enter the maximum degree of the polynomials (up to " << MAX_DEGREE - 1 << "): ";
+cin >> degree;
+cout << "Enter coefficients for the first polynomial (up to degree " << degree << "):" << endl;
+for (int i = 0; i <= degree; ++i) {
+cout << "Coefficient for x^" << i << ": ";
+cin >> poly1[i];
+}
+cout << "First Polynomial: ";
+displayPolynomial(poly1, degree);
+cout << "Enter coefficients for the second polynomial (up to degree " << degree << "):" << endl;
+for (int i = 0; i <= degree; ++i) {
+cout << "Coefficient for x^" << i << ": ";
+cin >> poly2[i];
+}
+cout << "Second Polynomial: ";
+displayPolynomial(poly2, degree);
+int choice;
+do {
+cout << "\nMenu:\n";
+cout << "1. Add Polynomials\n";
+
+cout << "2. Subtract Polynomials\n";
+cout << "3. Multiply Polynomials\n";
+cout << "4. Exit\n";
+cout << "Enter your choice: ";
+cin >> choice;
+switch (choice) {
+case 1: {
+addPolynomials(poly1, poly2, result, degree);
+cout << "Result of Addition: ";
+displayPolynomial(result, degree);
+break;
+}
+case 2: {
+subtractPolynomials(poly1, poly2, result, degree);
+cout << "Result of Subtraction: ";
+displayPolynomial(result, degree);
+break;
+}
+case 3: {
+multiplyPolynomials(poly1, poly2, result, degree);
+cout << "Result of Multiplication: ";
+displayPolynomial(result, 2 * degree);
+break;
+}
+case 4:
+cout << "Exiting...\n";
+break;
+default:
+cout << "Invalid choice. Please try again.\n";
+}
+} while (choice != 4);
+return 0;
+}

@@ -1,0 +1,73 @@
+#include <iostream>
+using namespace std;
+#define c 4
+
+void display(bool board[][c], int size, int colSize) {
+cout<<endl;
+for (int row = 0; row < size; row++) {
+for (int col = 0; col < colSize; col++) {
+if (board[row][col]) {
+cout << " Q ";
+} else {
+cout << " - ";
+}
+}
+cout << endl;
+}
+cout << endl;
+
+}
+
+bool isSafe(bool board[][c], int row, int col, int size) {
+// Check vertical
+for (int i = 1; i <= row; i++) {
+if (board[row - i][col]) {
+return false;
+}
+}
+
+// Check left diagonal
+int spaceLeft = min(row, col);
+for (int i = 1; i <= spaceLeft; i++) {
+if (board[row - i][col - i]) {
+return false;
+}
+}
+
+// Check right diagonal
+int spaceRight = min(row, size - col - 1);
+for (int i = 1; i <= spaceRight; i++) {
+if (board[row - i][col + i]) {
+return false;
+}
+
+}
+
+return true;
+}
+
+int queens(bool board[][c], int row, int size, int colSize) {
+if (row == size) {
+display(board, size, colSize);
+cout<<endl;
+return 1;
+}
+
+int count = 0;
+for (int col = 0; col < colSize; col++) {
+if (isSafe(board, row, col, size)) {
+board[row][col] = true;
+count += queens(board, row + 1, size, colSize);
+board[row][col] = false;
+}
+}
+return count;
+}
+
+int main() {
+const int size = c;
+bool board[size][size] = {};
+cout << "Total solutions: " << queens(board, 0, size, size) << endl;
+
+return 0;
+}

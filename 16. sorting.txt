@@ -1,0 +1,119 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// Employee class to store ID and performance score
+class Employee {
+public:
+    int id;
+    double score;
+
+    Employee(int employee_id, double performance_score) {
+        id = employee_id;
+        score = performance_score;
+    }
+};
+
+// Function to display employee records
+void display(const vector<Employee>& employees) {
+    for (const auto& employee : employees) {
+        cout << "Employee ID: " << employee.id << " | Performance Score: " << employee.score << endl;
+    }
+}
+
+// Bubble Sort Function
+void bubbleSort(vector<Employee>& employees) {
+    int n = employees.size();
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = 0; j < n - 1 - i; ++j) {
+            if (employees[j].score > employees[j + 1].score) {
+                // Swap the elements
+                swap(employees[j], employees[j + 1]);
+            }
+        }
+    }
+}
+
+// Selection Sort Function
+void selectionSort(vector<Employee>& employees) {
+    int n = employees.size();
+    for (int i = 0; i < n - 1; ++i) {
+        int minIndex = i;
+        for (int j = i + 1; j < n; ++j) {
+            if (employees[j].score < employees[minIndex].score) {
+                minIndex = j;
+            }
+        }
+        // Swap the elements
+        swap(employees[i], employees[minIndex]);
+    }
+}
+
+// Insertion Sort Function
+void insertionSort(vector<Employee>& employees) {
+    int n = employees.size();
+    for (int i = 1; i < n; ++i) {
+        Employee key = employees[i];
+        int j = i - 1;
+        while (j >= 0 && employees[j].score > key.score) {
+            employees[j + 1] = employees[j];
+            --j;
+        }
+        employees[j + 1] = key;
+    }
+}
+
+int main() {
+    vector<Employee> employees = {
+        Employee(101, 87.5),
+        Employee(102, 92.3),
+        Employee(103, 78.9),
+        Employee(104, 85.4),
+        Employee(105, 90.1)
+    };
+
+    cout << "Original Employee Records:\n";
+    display(employees);
+    
+    while(true){
+
+    int choice;
+    cout << "\nChoose a sorting method:\n";
+    cout << "1. Bubble Sort\n";
+    cout << "2. Selection Sort\n";
+    cout << "3. Insertion Sort\n";
+    cout << "4. Exit\n";
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    switch (choice) {
+        case 1:
+            bubbleSort(employees);
+            cout << "\nEmployee Records Sorted Using Bubble Sort:\n";
+            display(employees);
+            break;
+        case 2:
+            selectionSort(employees);
+            cout << "\nEmployee Records Sorted Using Selection Sort:\n";
+            display(employees);
+            break;
+        case 3:
+            insertionSort(employees);
+            cout << "\nEmployee Records Sorted Using Insertion Sort:\n";
+            display(employees);
+            break;
+        case 4:
+            cout<<"\n Exiting...";
+            return 0;
+        default:
+            cout << "Invalid choice!";
+            return 1;
+    }
+    }
+
+   
+    
+
+    return 0;
+}

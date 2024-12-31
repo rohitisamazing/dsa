@@ -1,0 +1,94 @@
+#include <iostream>
+#include <vector>
+#include <tuple>
+#include <algorithm>
+using namespace std;
+
+// Disjoint Set Union (DSU) class for Kruskal's Algorithm
+class DSU {
+    vector<int> parent, rank;
+
+public:
+    DSU(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; ++i) {
+            parent[i] = i;
+        }
+    }
+
+    int find(int x) {
+        if (x != parent[x]) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    void unite(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+
+        if (rootX != rootY) {
+            if (rank[rootX] < rank[rootY]) {
+                parent[rootX] = rootY;
+            } else if (rank[rootX] > rank[rootY]) {
+                parent[rootY] = rootX;
+            } else {
+                parent[rootY] = rootX;
+                rank[rootX]++;
+            }
+        }
+    }
+};
+
+// Kruskal's Algorithm
+void kruskal(int n, vector<tuple<int, int, int>>& edges) {
+    sort(edges.begin(), edges.end(),
+         [](const tuple<int, int, int>& a, const tuple<int, int, int>& b) {
+             return get<2>(a) < get<2>(b);
+         });
+
+    DSU dsu(n);
+    vector<tuple<int, int, int>> mst;
+    int totalCost = 0;
+
+    for (const auto& edge : edges) {
+        int u, v, weight;
+        tie(u, v, weight) = edge;
+
+        if (dsu.find(u) != dsu.find(v)) {
+            dsu.unite(u, v);
+            mst.push_back(edge);
+            totalCost += weight;
+        }
+    }
+
+    // Output the MST
+    cout << "Edges in the Minimum Spanning Tree:\n";
+    for (const auto& edge : mst) {
+        int u, v, weight;
+        tie(u, v, weight) = edge;
+        cout << u << " -- " << v << " : " << weight << "\n";
+    }
+    cout << "Total cost of MST: " << totalCost << "\n";
+}
+
+int main() {
+    int n, m; // Number of offices (nodes) and phone lines (edges)
+    cout << "Enter the number of offices (nodes): ";
+    cin >> n;
+    cout << "Enter the number of phone line options (edges): ";
+    cin >> m;
+
+    vector<tuple<int, int, int>> edges;
+    cout << "Enter the edges (format: u v cost):\n";
+    for (int i = 0; i < m; ++i) {
+        int u, v, cost;
+        cin >> u >> v >> cost;
+        edges.emplace_back(u, v, cost);
+    }
+
+    kruskal(n, edges);
+
+    return 0;
+}

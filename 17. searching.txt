@@ -1,0 +1,112 @@
+#include <iostream>
+#include <vector>
+#include <chrono> // To measure execution time
+#include <cmath>
+#include <algorithm>
+using namespace std;
+
+// Linear Search
+int linearSearch(const vector<int>& arr, int target) {
+    for (int i = 0; i < arr.size(); ++i) {
+        if (arr[i] == target) {
+            return i; // Found the element
+        }
+    }
+    return -1; // Element not found
+}
+
+// Binary Search (Assumes the array is sorted)
+int binarySearch(const vector<int>& arr, int target) {
+    int left = 0, right = arr.size() - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target) {
+            return mid; // Found the element
+        }
+        if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1; // Element not found
+}
+
+// Jump Search (Assumes the array is sorted)
+int jumpSearch(const vector<int>& arr, int target) {
+    int n = arr.size();
+    int step = sqrt(n); // Optimal block size
+    int prev = 0;
+    
+    // Jump ahead in steps
+    while (arr[min(step, n) - 1] < target) {
+        prev = step;
+        step += sqrt(n);
+        if (prev >= n) return -1; // Element is not present
+    }
+
+    // Perform linear search within the block
+    for (int i = prev; i < min(step, n); ++i) {
+        if (arr[i] == target) {
+            return i; // Found the element
+        }
+    }
+    return -1; // Element not found
+}
+
+// Helper function to generate a large random array
+vector<int> generateArray(int size) {
+    vector<int> arr(size);
+    for (int i = 0; i < size; ++i) {
+        arr[i] = rand() % 10000; // Generate random numbers
+    }
+    sort(arr.begin(), arr.end()); // Sort array for Binary and Jump Search
+    return arr;
+}
+
+int main() {
+    // Input array size and target element
+    int size, target;
+    cout << "Enter the size of the array: ";
+    cin >> size;
+    cout << "Enter the target value to search: ";
+    cin >> target;
+
+    // Generate a sorted array
+    vector<int> arr = generateArray(size);
+
+    // Measure time for Linear Search
+    auto start = chrono::high_resolution_clock::now();
+    int linearResult = linearSearch(arr, target);
+    auto end = chrono::high_resolution_clock::now();
+    auto linearDuration = chrono::duration_cast<chrono::microseconds>(end - start);
+
+    // Measure time for Binary Search
+    start = chrono::high_resolution_clock::now();
+    int binaryResult = binarySearch(arr, target);
+    end = chrono::high_resolution_clock::now();
+    auto binaryDuration = chrono::duration_cast<chrono::microseconds>(end - start);
+
+    // Measure time for Jump Search
+    start = chrono::high_resolution_clock::now();
+    int jumpResult = jumpSearch(arr, target);
+    end = chrono::high_resolution_clock::now();
+    auto jumpDuration = chrono::duration_cast<chrono::microseconds>(end - start);
+
+    // Display search results
+    cout << "\nResults for search of target " << target << ":\n";
+    cout << "Linear Search took " << linearDuration.count() << " microseconds.\n";
+    cout << "Binary Search took " << binaryDuration.count() << " microseconds.\n";
+    cout << "Jump Search took " << jumpDuration.count() << " microseconds.\n";
+
+    // Print the best search method
+    if (linearDuration.count() < binaryDuration.count() && linearDuration.count() < jumpDuration.count()) {
+        cout << "\nBest search method: Linear Search\n";
+    } else if (binaryDuration.count() < linearDuration.count() && binaryDuration.count() < jumpDuration.count()) {
+        cout << "\nBest search method: Binary Search\n";
+    } else {
+        cout << "\nBest search method: Jump Search\n";
+    }
+
+    return 0;
+}

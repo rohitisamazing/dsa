@@ -1,0 +1,83 @@
+#include <iostream>
+#include <map>
+using namespace std;
+
+int main() {
+    map<int, int> avlTree; // Map acts as a balanced binary search tree
+    int choice, value;
+    int key = 0; // Auto-incrementing key
+
+    do {
+        cout << "\n--- AVL Tree Operations Using Map ---\n";
+        cout << "1. Insert\n";
+        cout << "2. Search\n";
+        cout << "3. Delete\n";
+        cout << "4. Display (In-order Traversal)\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: // Insert
+                cout << "Enter value to insert: ";
+                cin >> value;
+                avlTree[key++] = value; // Auto-assign a key
+                cout << "Inserted value " << value << " into the tree.\n";
+                break;
+
+            case 2: // Search
+                cout << "Enter value to search: ";
+                cin >> value;
+                {
+                    bool found = false;
+                    for (const auto& pair : avlTree) {
+                        if (pair.second == value) {
+                            cout << "Value " << value << " found with key " << pair.first << ".\n";
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        cout << "Value " << value << " not found in the tree.\n";
+                    }
+                }
+                break;
+
+            case 3: // Delete
+                cout << "Enter value to delete: ";
+                cin >> value;
+                {
+                    bool deleted = false;
+                    for (auto it = avlTree.begin(); it != avlTree.end(); ++it) {
+                        if (it->second == value) {
+                            avlTree.erase(it);
+                            cout << "Value " << value << " deleted from the tree.\n";
+                            deleted = true;
+                            break;
+                        }
+                    }
+                    if (!deleted) {
+                        cout << "Value " << value << " not found in the tree.\n";
+                    }
+                }
+                break;
+
+            case 4: // Display
+                cout << "In-order traversal of the tree:\n";
+                for (const auto& pair : avlTree) {
+                    cout << pair.second << " ";
+                }
+                cout << endl;
+                break;
+
+            case 5: // Exit
+                cout << "Exiting program.\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}

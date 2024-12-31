@@ -1,0 +1,159 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Node {
+public:
+    int bit;
+    Node* next;
+    Node* prev;
+    Node(int b) : bit(b), next(NULL), prev(NULL) {}
+};
+
+class DoublyLinkedList {
+public:
+    Node* head;
+    Node* tail;
+    DoublyLinkedList() : head(NULL), tail(NULL) {}
+
+    void insertFront(int bit) {
+        Node* newNode = new Node(bit);
+        if (!head) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+    }
+
+    void insertBack(int bit) {
+        Node* newNode = new Node(bit);
+        if (!tail) {
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+    }
+
+    void display() {
+        Node* current = head;
+        while (current) {
+            cout << current->bit;
+            current = current->next;
+        }
+        cout << endl;
+    }
+
+    DoublyLinkedList onesComplement() {
+        DoublyLinkedList result;
+        Node* current = head;
+        while (current) {
+            result.insertBack(current->bit == 0 ? 1 : 0);
+            current = current->next;
+        }
+        return result;
+    }
+
+    DoublyLinkedList twosComplement() {
+        DoublyLinkedList onesComp = onesComplement();
+        return addOneToBinary(onesComp);
+    }
+
+    DoublyLinkedList addOneToBinary(DoublyLinkedList& binary) {
+        DoublyLinkedList result;
+        Node* current = binary.tail;
+        int carry = 1;
+        while (current || carry) {
+            int sum = carry;
+            if (current) {
+                sum += current->bit;
+                current = current->prev;
+            }
+            carry = sum / 2;
+            result.insertFront(sum % 2);
+        }
+        return result;
+    }
+
+    DoublyLinkedList add(DoublyLinkedList& other) {
+        DoublyLinkedList result;
+        Node* p1 = tail;
+        Node* p2 = other.tail;
+        int carry = 0;
+        while (p1 || p2 || carry) {
+            int sum = carry;
+            if (p1) {
+                sum += p1->bit;
+                p1 = p1->prev;
+            }
+            if (p2) {
+                sum += p2->bit;
+                p2 = p2->prev;
+            }
+            carry = sum / 2;
+            result.insertFront(sum % 2);
+        }
+        return result;
+    }
+
+    ~DoublyLinkedList() {
+        Node* current = head;
+        while (current) {
+            Node* next = current->next;
+            delete current;
+            current = next;
+        }
+    }
+};
+
+DoublyLinkedList stringToBinaryList(const string& binStr) {
+    DoublyLinkedList binaryList;
+    for (char ch : binStr) {
+        if (ch == '0') {
+            binaryList.insertBack(0);
+        } else if (ch == '1') {
+            binaryList.insertBack(1);
+        } else {
+            cerr << "Invalid binary input!" << endl;
+            exit(1);
+        }
+    }
+    return binaryList;
+}
+
+int main() {
+    string input1, input2;
+
+    cout << "Enter first binary number: ";
+    cin >> input1;
+    cout << "Enter second binary number: ";
+    cin >> input2;
+
+    DoublyLinkedList binary1 = stringToBinaryList(input1);
+    DoublyLinkedList binary2 = stringToBinaryList(input2);
+
+    cout << "Binary 1: ";
+    binary1.display();
+    cout << "Binary 2: ";
+    binary2.display();
+
+    cout << "1's Complement of Binary 1: ";
+    binary1.onesComplement().display();
+
+    cout << "2's Complement of Binary 1: ";
+    binary1.twosComplement().display();
+
+    cout << "1's Complement of Binary 2: ";
+    binary2.onesComplement().display();
+
+    cout << "2's Complement of Binary 2: ";
+    binary2.twosComplement().display();
+
+    cout << "Sum of Binary 1 and Binary 2: ";
+    binary1.add(binary2).display();
+
+    return 0;
+}

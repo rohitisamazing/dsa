@@ -1,0 +1,81 @@
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+int precedence(char op) {
+if (op == '+' || op == '-') return 1;
+if (op == '*' || op == '/') return 2;
+return 0;
+}
+string infixToPostfix(const string& infix) {
+stack<char> opStack;
+string postfix = "";
+for (size_t i = 0; i < infix.length(); i++) {
+char token = infix[i];
+if (isalnum(token)) {
+postfix += token;
+
+} else if (token == '(') {
+opStack.push(token);
+} else if (token == ')') {
+while (!opStack.empty() && opStack.top() != '(') {
+postfix += opStack.top();
+opStack.pop();
+}
+opStack.pop();
+} else {
+while (!opStack.empty() && precedence(opStack.top()) >= precedence(token)) {
+postfix += opStack.top();
+opStack.pop();
+}
+opStack.push(token);
+}
+}
+while (!opStack.empty()) {
+postfix += opStack.top();
+opStack.pop();
+}
+return postfix;
+}
+int evaluatePostfix(const string& postfix) {
+stack<int> evalStack;
+
+for (size_t i = 0; i < postfix.length(); i++) {
+char token = postfix[i];
+if (isdigit(token)) {
+evalStack.push(token - '0');
+} else {
+int operand2 = evalStack.top(); evalStack.pop();
+int operand1 = evalStack.top(); evalStack.pop();
+switch (token) {
+case '+': evalStack.push(operand1 + operand2); break;
+case '-': evalStack.push(operand1 - operand2); break;
+case '*': evalStack.push(operand1 * operand2); break;
+case '/':
+if (operand2 != 0)
+evalStack.push(operand1 / operand2);
+else {
+cout << "Error: Division by zero" << endl;
+return 0;
+}
+break;
+}
+}
+}
+return evalStack.top();
+}
+
+int main() {
+string infix;
+cout << "Enter an infix expression (e.g., A+B*C or 2+3*4): ";
+getline(cin, infix);
+string postfix = infixToPostfix(infix);
+cout << "Postfix Expression: " << postfix << endl;
+if (!postfix.empty() && isdigit(postfix[0])) {
+int result = evaluatePostfix(postfix);
+cout << "Evaluation Result: " << result << endl;
+} else {
+cout << "Evaluation is not supported for non-numeric postfix expressions." << endl;
+}
+return 0;
+}

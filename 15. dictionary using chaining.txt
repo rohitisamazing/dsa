@@ -1,0 +1,113 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <string>
+using namespace std;
+
+template <typename KeyType, typename ValueType>
+class HashTable {
+private:
+    vector<list<pair<KeyType, ValueType>>> table;  // To handle collisions using chaining
+    int size;
+
+    // Hash function to map key to an index in the table
+    int hash(KeyType key) {
+        int hashValue = 0;
+        for (char ch : key) {
+            hashValue = (hashValue * 31 + ch) % size;  // Simple hash function
+        }
+        return hashValue;
+    }
+
+public:
+    // Constructor to initialize the table size
+    HashTable(int s) : size(s) {
+        table.resize(size);  // Resize the table to the given size
+    }
+
+    // Insert operation (with or without replacement)
+    bool insert(KeyType key, ValueType value, bool replace = false) {
+        int index = hash(key);
+        // Search if the key already exists
+        for (auto& pair : table[index]) {
+            if (pair.first == key) {
+                if (replace) {
+                    pair.second = value;  // Replace value if key already exists
+                } else {
+                    return false;  // Key already exists, don't insert
+                }
+            }
+        }
+        // If key does not exist, insert new pair
+        table[index].push_back(make_pair(key, value));
+        return true;
+    }
+
+    // Find operation
+    ValueType* find(KeyType key) {
+        int index = hash(key);
+        for (auto& pair : table[index]) {
+            if (pair.first == key) {
+                return &pair.second;  // Return reference to the value
+            }
+        }
+        return nullptr;  // Key not found
+    }
+
+    // Delete operation
+    bool deleteKey(KeyType key) {
+        int index = hash(key);
+        auto& chain = table[index];
+        for (auto it = chain.begin(); it != chain.end(); ++it) {
+            if (it->first == key) {
+                chain.erase(it);  // Remove the pair from the chain
+                return true;  // Key deleted
+            }
+        }
+        return false;  // Key not found
+    }
+
+    // Function to print the hash table for debugging
+    void print() {
+        for (int i = 0; i < size; ++i) {
+            if (!table[i].empty()) {
+                cout << "Index " << i << ": ";
+                for (auto& pair : table[i]) {
+                    cout << "(" << pair.first << ", " << pair.second << ") ";
+                }
+                cout << endl;
+            }
+        }
+    }
+};
+
+int main() {
+    HashTable<string, string> dict(10);  // Create a hash table for dictionary with string keys and values
+
+    // Insert key-value pairs (with replacement allowed)
+    dict.insert("Alice", "123-456-7890", true);
+    dict.insert("Bob", "987-654-3210", true);
+    dict.insert("Charlie", "555-555-5555", false);
+    dict.insert("Alice", "111-222-3333", true);  // Replace Alice's number
+
+    // Find and print values
+    string* value = dict.find("Alice");
+    if (value) cout << "Alice's phone number: " << *value << endl;
+    value = dict.find("Bob");
+    if (value) cout << "Bob's phone number: " << *value << endl;
+
+    // Delete key-value pair
+    bool deleted = dict.deleteKey("Charlie");
+    if (deleted) cout << "Charlie deleted successfully." << endl;
+    else cout << "Charlie not found." << endl;
+
+    // Try finding deleted key
+    value = dict.find("Charlie");
+    if (value) cout << "Charlie still exists: " << *value << endl;
+    else cout << "Charlie no longer exists." << endl;
+
+    // Print the hash table
+    dict.print();
+
+    return 0;
+}

@@ -1,0 +1,81 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <string>
+using namespace std;
+
+class HashTable {
+private:
+    vector<list<pair<string, string>>> tableChaining; // For chaining
+    vector<pair<string, string>> tableProbing; // For linear probing
+    int size;
+    bool useChaining; // Flag to choose collision method
+
+public:
+    HashTable(int s, bool useChainingMethod) {
+        size = s;
+        useChaining = useChainingMethod;
+        tableChaining.resize(size);
+        tableProbing.resize(size, {"", ""});
+    }
+
+    // Hash function to calculate index
+    int hash(string key) {
+        int sum = 0;
+        for (char c : key) {
+            sum += c;
+        }
+        return sum % size;
+    }
+
+    // Insert method (Chaining or Linear Probing based on flag)
+    void insert(string key, string value) {
+        int index = hash(key);
+
+        if (useChaining) {
+            tableChaining[index].push_back({key, value});
+        } else {
+            while (tableProbing[index].first != "" && tableProbing[index].first != key) {
+                index = (index + 1) % size; // Linear probing
+            }
+            tableProbing[index] = {key, value};
+        }
+    }
+
+    // Search method (Chaining or Linear Probing)
+    string search(string key) {
+        int index = hash(key);
+        if (useChaining) {
+            for (auto &pair : tableChaining[index]) {
+                if (pair.first == key) {
+                    return pair.second; // Found
+                }
+            }
+        } else {
+            while (tableProbing[index].first != "") {
+                if (tableProbing[index].first == key) {
+                    return tableProbing[index].second; // Found
+                }
+                index = (index + 1) % size;
+            }
+        }
+        return "Not found"; // Not found
+    }
+};
+
+int main() {
+    int size = 10;
+    bool useChaining = true; // Set to false for linear probing
+
+    HashTable ht(size, useChaining);
+
+    ht.insert("Alice", "123-456-7890");
+    ht.insert("Bob", "987-654-3210");
+    ht.insert("Charlie", "555-555-5555");
+
+    cout << "Alice's phone number: " << ht.search("Alice") << endl;
+    cout << "Bob's phone number: " << ht.search("Bob") << endl;
+    cout << "David's phone number: " << ht.search("David") << endl;
+
+    return 0;
+}

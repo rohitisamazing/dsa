@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+// Function to check if placing a queen at (row, col) is safe
+bool isSafe(const vector<int>& board, int row, int col) {
+    for (int i = 0; i < row; ++i) {
+        int placedCol = board[i];
+        // Check column and diagonal conflicts
+        if (placedCol == col || abs(placedCol - col) == abs(i - row)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Function to print the board
+void printBoard(const vector<int>& board) {
+    for (int row = 0; row < board.size(); ++row) {
+        for (int col = 0; col < board.size(); ++col) {
+            if (board[row] == col) {
+                cout << "Q ";
+            } else {
+                cout << ". ";
+            }
+        }
+        cout << endl;
+    }
+    cout << "\n";
+}
+
+// Function to solve the N-Queens problem using a queue for storing solutions
+void solveNQueens(int n) {
+    queue<vector<int>> q; // Queue to store partial solutions
+    q.push({});           // Start with an empty board
+
+    vector<vector<int>> solutions; // To store all complete solutions
+
+    while (!q.empty()) {
+        vector<int> board = q.front();
+        q.pop();
+
+        int row = board.size();
+        if (row == n) {
+            // A valid solution is found
+            solutions.push_back(board);
+        } else {
+            for (int col = 0; col < n; ++col) {
+                if (isSafe(board, row, col)) {
+                    vector<int> newBoard = board;
+                    newBoard.push_back(col);
+                    q.push(newBoard);
+                }
+            }
+        }
+    }
+
+    // Print all solutions
+    for (const auto& solution : solutions) {
+        printBoard(solution);
+    }
+    cout << "Total solutions: " << solutions.size() << endl;
+}
+
+int main() {
+    int n = 4; // Number of queens
+    cout << "All possible solutions for " << n << " queens:\n\n";
+    solveNQueens(n);
+    return 0;
+}

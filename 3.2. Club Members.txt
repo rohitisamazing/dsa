@@ -1,0 +1,223 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+struct Node {
+    string nme;
+    int prn;
+    int academic_year;
+    Node* next;
+};
+
+Node* diva = nullptr;
+Node* divb = nullptr;
+Node* temp = nullptr;
+Node* head = nullptr;
+Node* q = nullptr;
+Node* concat = nullptr;
+
+void create(int div) {
+    int x, n, ay;
+    string name;
+
+    cout << "\nEnter how many students to insert: ";
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cout << "\nEnter PRN, Name, and Academic Year to insert: ";
+        cin >> x >> name >> ay;
+        temp = new Node();
+        if (temp == nullptr) {
+            cout << "Memory allocation failed!\n";
+            return;
+        }
+        temp->prn = x;
+        temp->nme = name;
+        temp->academic_year = ay;
+        temp->next = nullptr;
+        if (head == nullptr) {
+            head = temp;
+        } else {
+            q = head;
+            while (q->next != nullptr) {
+                q = q->next;
+            }
+            q->next = temp;
+        }
+    }
+    if (div == 1) {
+        diva = head;
+    } else {
+        divb = head;
+    }
+    head = nullptr;
+}
+
+void display(int div) {
+    if (div == 1) {
+        q = diva;
+    } else if (div == 2) {
+        q = divb;
+    } else if (div == 3) {
+        q = concat;
+    }
+    while (q != nullptr) {
+        cout << "PRN: " << q->prn << ", Name: " << q->nme << ", Academic Year: " << q->academic_year << " --> ";
+        q = q->next;
+    }
+    cout << "NULL\n";
+}
+
+void delete_student(int div) {
+    int x;
+    cout << "\nEnter PRN number to delete: ";
+    cin >> x;
+    if (div == 1) {
+        q = diva;
+    } else if (div == 2) {
+        q = divb;
+    } else {
+        cout << "Invalid division\n";
+        return;
+    }
+    if (q != nullptr && q->prn == x) {
+        temp = q;
+        q = q->next;
+        if (div == 1) {
+            diva = q;
+        } else {
+            divb = q;
+        }
+        delete temp;
+        cout << "Deleted successfully!\n";
+        return;
+    }
+    while (q != nullptr && q->next != nullptr) {
+        if (q->next->prn == x) {
+            temp = q->next;
+            q->next = q->next->next;
+            delete temp;
+            cout << "Deleted successfully!\n";
+            return;
+        }
+        q = q->next;
+    }
+    cout << "PRN not found!\n";
+}
+
+void total(int div) {
+    if (div == 1) {
+        q = diva;
+    } else if (div == 2) {
+        q = divb;
+    } else {
+        cout << "Invalid division\n";
+        return;
+    }
+    int cnt = 0;
+    while (q != nullptr) {
+        cnt++;
+        q = q->next;
+    }
+    cout << "Total number of students: " << cnt << "\n";
+}
+
+void Concatenate() {
+    if (diva == nullptr && divb == nullptr) {
+        cout << "Both divisions are empty!\n";
+        return;
+    }
+    concat = nullptr;
+    Node* last = nullptr;
+
+    if (diva != nullptr) {
+        q = diva;
+        while (q != nullptr) {
+            temp = new Node();
+            if (temp == nullptr) {
+                cout << "Memory allocation failed!\n";
+                return;
+            }
+            temp->prn = q->prn;
+            temp->nme = q->nme;
+            temp->academic_year = q->academic_year;
+            temp->next = nullptr;
+            if (concat == nullptr) {
+                concat = temp;
+            } else {
+                last->next = temp;
+            }
+            last = temp;
+            q = q->next;
+        }
+    }
+
+    if (divb != nullptr) {
+        q = divb;
+        while (q != nullptr) {
+            temp = new Node();
+            if (temp == nullptr) {
+                cout << "Memory allocation failed!\n";
+                return;
+            }
+            temp->prn = q->prn;
+                        temp->nme = q->nme;
+            temp->academic_year = q->academic_year;
+            temp->next = nullptr;
+
+            if (last != nullptr) {
+                last->next = temp;
+            }
+
+            last = temp;
+            q = q->next;
+        }
+    }
+    display(3);
+}
+
+int main() {
+    int ch, div;
+    do {
+        cout << "\n1. Create";
+        cout << "\n2. Display";
+        cout << "\n3. Total";
+        cout << "\n4. Delete";
+        cout << "\n5. Concatenate";
+        cout << "\n6. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> ch;
+        switch (ch) {
+            case 1:
+                cout << "\nEnter which division A or B (1/2): ";
+                cin >> div;
+                create(div);
+                break;
+            case 2:
+                cout << "\nEnter which division A or B (1/2): ";
+                cin >> div;
+                display(div);
+                break;
+            case 3:
+                cout << "\nEnter which division A or B (1/2): ";
+                cin >> div;
+                total(div);
+                break;
+            case 4:
+                cout << "\nEnter which division A or B (1/2): ";
+                cin >> div;
+                delete_student(div);
+                break;
+            case 5:
+                Concatenate();
+                break;
+            case 6:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Invalid choice\n";
+        }
+    } while (ch != 6);
+    return 0;
+}

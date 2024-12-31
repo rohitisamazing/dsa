@@ -1,0 +1,129 @@
+#include <iostream>
+#include <list>
+#include <string>
+using namespace std;
+
+// Structure to store member's information
+struct Member {
+    string prn;
+    string name;
+    string academicYear;
+
+    Member(string prn, string name, string academicYear) {
+        this->prn = prn;
+        this->name = name;
+        this->academicYear = academicYear;
+    }
+};
+
+// Function to display club members
+void displayMembers(const list<Member>& members) {
+    if (members.empty()) {
+        cout << "No members to display!" << endl;
+        return;
+    }
+    for (const auto& member : members) {
+        cout << "PRN: " << member.prn << ", Name: " << member.name << ", A.Y.: " << member.academicYear << endl;
+    }
+}
+
+// Function to count the total number of members
+int countMembers(const list<Member>& members) {
+    return members.size();
+}
+
+int main() {
+    // Create two lists for two divisions
+    list<Member> divisionA;
+    list<Member> divisionB;
+    int choice;
+    string prn, name, academicYear;
+
+    while (true) {
+        cout << "\n--- Club Member Management ---\n";
+        cout << "1. Add member to Division A\n";
+        cout << "2. Add member to Division B\n";
+        cout << "3. Display members of Division A\n";
+        cout << "4. Display members of Division B\n";
+        cout << "5. Concatenate Division B to Division A\n";
+        cout << "6. Delete member from Division A\n";
+        cout << "7. Count total members in Division A\n";
+        cout << "8. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: // Add member to Division A
+                cout << "Enter PRN: ";
+                cin >> prn;
+                cout << "Enter Name: ";
+                cin.ignore();  // To ignore the newline character from previous input
+                getline(cin, name);
+                cout << "Enter Academic Year: ";
+                cin >> academicYear;
+                divisionA.push_back(Member(prn, name, academicYear));
+                cout << "Member added to Division A!" << endl;
+                break;
+
+            case 2: // Add member to Division B
+                cout << "Enter PRN: ";
+                cin >> prn;
+                cout << "Enter Name: ";
+                cin.ignore();
+                getline(cin, name);
+                cout << "Enter Academic Year: ";
+                cin >> academicYear;
+                divisionB.push_back(Member(prn, name, academicYear));
+                cout << "Member added to Division B!" << endl;
+                break;
+
+            case 3: // Display members of Division A
+                cout << "\nMembers of Division A:" << endl;
+                displayMembers(divisionA);
+                break;
+
+            case 4: // Display members of Division B
+                cout << "\nMembers of Division B:" << endl;
+                displayMembers(divisionB);
+                break;
+
+            case 5: // Concatenate Division B to Division A
+                divisionA.splice(divisionA.end(), divisionB);  // Add all members from divisionB to the end of divisionA
+                cout << "Division B has been concatenated to Division A!" << endl;
+                break;
+
+            case 6: { // Delete member from Division A
+                cout << "Enter PRN of the member to delete: ";
+                cin >> prn;
+
+                bool found = false;
+                for (auto it = divisionA.begin(); it != divisionA.end(); ++it) {
+                    if (it->prn == prn) {
+                        divisionA.erase(it);
+                        cout << "Member with PRN " << prn << " deleted from Division A!" << endl;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    cout << "Member with PRN " << prn << " not found!" << endl;
+                }
+                break;
+            }
+
+            case 7: // Count total members in Division A
+                cout << "Total members in Division A: " << countMembers(divisionA) << endl;
+                break;
+
+            case 8: // Exit
+                cout << "Exiting the program. Goodbye!" << endl;
+                return 0;
+
+            default:
+                cout << "Invalid choice! Please try again." << endl;
+        }
+    }
+
+    return 0;
+}

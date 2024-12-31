@@ -1,0 +1,42 @@
+#include <iostream>
+#include <string>
+using namespace std;
+void printSparseMatrix(int sparseMatrix[4][4], const string cities[], int n) {
+cout << "\nSparse Matrix Representation of Direct Flights:\n";
+cout<<"Row \t Column \t Value\n";
+for (int i = 0; i < n; ++i) {
+for (int j = 0; j < n; ++j) {
+if (sparseMatrix[i][j] != 0) {
+cout << "{" << i << " \t" << j << " \t" << sparseMatrix[i][j] << "}" << endl;
+}
+}
+}
+}
+
+void printNormalMatrix(int matrix[4][4], const string cities[], int n) {
+cout << "\nNormal Matrix Representation of Direct Flights:\n";
+
+for (int i = 0; i < n; ++i) {
+for (int j = 0; j < n; ++j) {
+cout << matrix[i][j] << " ";
+}
+cout << endl;
+}
+}
+int main() {
+string cities[4] = {"Pune", "Bangalore", "Sambhajinagar", "Nagpur"};
+int n = 4;
+int sparseMatrix[4][4] = {0};
+cout << "Enter direct flight availability (1 for available, 0 for not available):" << endl;
+for (int i = 0; i < n; ++i) {
+for (int j = 0; j < n; ++j) {
+if (i != j) {
+cout << "Is there a direct flight from " << cities[i] << " to " << cities[j] << "? (1/0): ";
+cin >> sparseMatrix[i][j];
+}
+}
+}
+printNormalMatrix(sparseMatrix, cities, n);
+printSparseMatrix(sparseMatrix, cities, n);
+return 0;
+}
